@@ -8216,7 +8216,10 @@ with pkgs;
 
   man = man-db;
 
-  man-db = callPackage ../tools/misc/man-db { };
+  man-db = callPackage ../tools/misc/man-db {
+    # Avoid creating a fork bomb when shell rc files try to use manpath.
+    makeWrapper = makeBinaryWrapper;
+  };
 
   mandoc = callPackage ../tools/misc/mandoc { };
 
