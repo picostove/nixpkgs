@@ -249,10 +249,16 @@ stdenv.mkDerivation {
     ''
 
     + optionalString cc.langFortran or false ''
-      wrap ${targetPrefix}gfortran $wrapper $ccPath/${targetPrefix}gfortran
-      ln -sv ${targetPrefix}gfortran $out/bin/${targetPrefix}g77
-      ln -sv ${targetPrefix}gfortran $out/bin/${targetPrefix}f77
-      export named_fc=${targetPrefix}gfortran
+      if [ -e $ccPath/${targetPrefix}gfortran ]; then
+        wrap ${targetPrefix}gfortran $wrapper $ccPath/${targetPrefix}gfortran
+        ln -sv ${targetPrefix}gfortran $out/bin/${targetPrefix}g77
+        ln -sv ${targetPrefix}gfortran $out/bin/${targetPrefix}f77
+        export named_fc=${targetPrefix}gfortran
+      elif [ -e $ccPath/flang-new ]; then
+        wrap ${targetPrefix}flang-new $wrapper $ccPath/flang-new
+        ln -s ${targetPrefix}flang-new $out/bin/${targetPrefix}fc
+        export named_fc=${targetPrefix}flang-new
+      fi
     ''
 
     + optionalString cc.langJava or false ''
