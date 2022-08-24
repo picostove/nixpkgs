@@ -113,7 +113,8 @@ rec {
     else lib.warnIf skipLint "Linting is disabled" (runCommand testDriverName
       {
         inherit testName;
-        nativeBuildInputs = [ makeWrapper ];
+        nativeBuildInputs = [ buildPackages.makeWrapper ];
+        buildInputs = [ testDriver ];
         testScript = testScript';
         preferLocalBuild = true;
         passthru = passthru // {
