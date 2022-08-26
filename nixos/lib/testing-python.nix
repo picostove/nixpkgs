@@ -56,7 +56,7 @@ rec {
     let
       # Reifies and correctly wraps the python test driver for
       # the respective qemu version and with or without ocr support
-      testDriver = pkgs.callPackage ./test-driver {
+      testDriver = buildPackages.callPackage ./test-driver {
         inherit enableOCR;
         qemu_pkg = qemu_test;
         imagemagick_light = imagemagick_light.override { inherit libtiff; };
@@ -110,11 +110,11 @@ rec {
         This is an IMPLEMENTATION ERROR and needs to be fixed. Meanwhile,
         please stick to alphanumeric chars and underscores as separation.
       ''
-    else lib.warnIf skipLint "Linting is disabled" (runCommand testDriverName
+    else lib.warnIf skipLint "Linting is disabled" (buildPackages.runCommand testDriverName
       {
         inherit testName;
-        nativeBuildInputs = [ buildPackages.makeWrapper ];
-        buildInputs = [ testDriver ];
+        nativeBuildInputs = [ pkgsBuildBuild.makeWrapper testDriver ];
+        #buildInputs = [ testDriver ];
         testScript = testScript';
         preferLocalBuild = true;
         passthru = passthru // {
@@ -134,7 +134,7 @@ rec {
           PYFLAKES_BUILTINS="$(
             echo -n ${lib.escapeShellArg (lib.concatStringsSep "," nodeHostNames)},
             < ${lib.escapeShellArg "driver-symbols"}
-          )" ${python3Packages.pyflakes}/bin/pyflakes $out/test-script
+          )" ${buildPackages.python3Packages.pyflakes}/bin/pyflakes $out/test-script
         ''}
 
         # set defaults through environment

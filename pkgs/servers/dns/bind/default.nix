@@ -22,8 +22,8 @@ stdenv.mkDerivation rec {
     ./dont-keep-configure-flags.patch
   ];
 
-  nativeBuildInputs = [ perl pkg-config ];
-  buildInputs = [ libtool libxml2 openssl libuv nghttp2 jemalloc ]
+  nativeBuildInputs = [ libtool perl pkg-config ];
+  buildInputs = [ libxml2 openssl libuv nghttp2 jemalloc ]
     ++ lib.optional stdenv.isLinux libcap
     ++ lib.optional enableSeccomp libseccomp
     ++ lib.optional enableGSSAPI libkrb5
