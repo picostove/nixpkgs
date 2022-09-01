@@ -4,6 +4,7 @@
 , fetchpatch
 
 # dependencies
+, buildPackages
 , cyrus_sasl
 , db
 , groff
@@ -67,6 +68,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [
     groff
+    buildPackages.libtool
   ];
 
   buildInputs = [
