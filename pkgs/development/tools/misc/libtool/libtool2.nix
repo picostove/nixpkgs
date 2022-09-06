@@ -8,6 +8,9 @@
 # cgit) that are needed here should be included directly in Nixpkgs as
 # files.
 
+let
+  isCross = stdenv.hostPlatform != stdenv.buildPlatform;
+in
 stdenv.mkDerivation rec {
   pname = "libtool";
   version = "2.4.7";
@@ -44,7 +47,13 @@ stdenv.mkDerivation rec {
     substituteInPlace build-aux/ltmain.in --replace '#! /usr/bin/env sh' '#!${runtimeShell}'
   '';
 
-  nativeBuildInputs = [ autoconf automake help2man m4 perl ];
+  preConfigure = let
+    isCross = stdenv.hostPlatform != stdenv.buildPlatform;
+  in lib.optionalString isCross ''
+    export HELP2MAN=true
+  '';
+
+  nativeBuildInputs = [ autoconf automake m4 perl ] ++ lib.optional (!isCross) help2man;
   propagatedBuildInputs = [ m4 file ];
 
   # Don't fixup "#! /bin/sh" in Libtool, otherwise it will use the
