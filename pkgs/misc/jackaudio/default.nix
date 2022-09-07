@@ -1,5 +1,5 @@
 { lib, stdenv, fetchFromGitHub, pkg-config, python3Packages, makeWrapper
-, bash, libsamplerate, libsndfile, readline, eigen, celt
+, buildPackages, libsamplerate, libsndfile, readline, eigen, celt
 , wafHook
 # Darwin Dependencies
 , aften, AudioUnit, CoreAudio, libobjc, Accelerate
@@ -36,7 +36,7 @@ stdenv.mkDerivation rec {
     sha256 = "01s8i64qczxqawgrzrw19asaqmcspf5l2h3203xzg56wnnhhzcw7";
   };
 
-  nativeBuildInputs = [ pkg-config python makeWrapper wafHook ];
+  nativeBuildInputs = [ buildPackages.bash pkg-config python makeWrapper wafHook ];
   buildInputs = [ libsamplerate libsndfile readline eigen celt
     optDbus optPythonDBus optLibffado optAlsaLib optLibopus
   ] ++ optionals stdenv.isDarwin [
@@ -45,7 +45,7 @@ stdenv.mkDerivation rec {
 
   prePatch = ''
     substituteInPlace svnversion_regenerate.sh \
-        --replace /bin/bash ${bash}/bin/bash
+        --replace /bin/bash ${buildPackages.bash}/bin/bash
   '';
 
   dontAddWafCrossFlags = "true";
