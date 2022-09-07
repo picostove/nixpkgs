@@ -846,7 +846,7 @@ in
           );
       in
       [
-        "-net nic,netdev=user.0,model=virtio"
+        "-device virtio-net-pci,netdev=user.0"
         "-netdev user,id=user.0,${forwardingOptions}\"$QEMU_NET_OPTS\""
       ];
 
