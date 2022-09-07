@@ -809,8 +809,11 @@ in
       '';
 
     boot.initrd.availableKernelModules =
-      optional cfg.writableStore "overlay"
+      [] #[ "virtio-blk" ]
+      ++ optional cfg.writableStore "overlay"
       ++ optional (cfg.qemu.diskInterface == "scsi") "sym53c8xx";
+
+    boot.initrd.kernelModules = [ "virtio-blk" "virtio-pci" ];
 
     virtualisation.bootDevice = mkDefault (driveDeviceName 1);
 
