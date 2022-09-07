@@ -27,6 +27,9 @@ rec {
     aarch64-linux = "${qemuPkg}/bin/qemu-system-aarch64 -machine virt,gic-version=max,accel=kvm:tcg -cpu max";
     powerpc64le-linux = "${qemuPkg}/bin/qemu-system-ppc64 -machine powernv";
     powerpc64-linux = "${qemuPkg}/bin/qemu-system-ppc64 -machine powernv";
+    # TODO: should split out kvm vs. non-kvm command lines.
+    # TODO: enable cpu features according to needs (e.g. sentinel).
+    riscv64-linux = "${qemuPkg}/bin/qemu-system-riscv64 -machine virt";
     x86_64-darwin = "${qemuPkg}/bin/qemu-kvm -cpu max";
   }.${pkgs.stdenv.hostPlatform.system} or "${qemuPkg}/bin/qemu-kvm";
 }
