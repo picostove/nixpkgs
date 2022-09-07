@@ -106,7 +106,7 @@ let
   # Shell script to start the VM.
   startVM =
     ''
-      #! ${pkgs.runtimeShell}
+      #! ${pkgs.buildPackages.runtimeShell}
 
       set -e
 
@@ -561,7 +561,7 @@ in
       package =
         mkOption {
           type = types.package;
-          default = pkgs.qemu_kvm;
+          default = pkgs.buildPackages.qemu_kvm;
           example = "pkgs.qemu_test";
           description = "QEMU package to use.";
         };
