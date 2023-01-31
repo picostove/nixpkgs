@@ -154,6 +154,9 @@ stdenv.mkDerivation ({
     ++ lib.optional withGd "--with-gd"
     ++ lib.optional (!withLibcrypt) "--disable-crypt";
 
+  # glibc can't build with --disable-shared.
+  dontAddStaticConfigureFlags = true;
+
   makeFlags = [
     "OBJCOPY=${stdenv.cc.targetPrefix}objcopy"
   ];
