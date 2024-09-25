@@ -67,8 +67,11 @@ let
     ] ++ lib.optionals (lib.versionAtLeast release_version "15") [
       # Added in LLVM15:
       # `clang-tidy-confusable-chars-gen`: https://github.com/llvm/llvm-project/commit/c3574ef739fbfcc59d405985a3a4fa6f4619ecdb
-      # `clang-pseudo-gen`: https://github.com/llvm/llvm-project/commit/cd2292ef824591cc34cc299910a3098545c840c7
       "-DCLANG_TIDY_CONFUSABLE_CHARS_GEN=${buildLlvmTools.libclang.dev}/bin/clang-tidy-confusable-chars-gen"
+    ] ++ lib.optionals (lib.versionAtLeast release_version "15" && lib.versionOlder release_version "20") [
+      # `clang-pseudo-gen`: Added in LLVM15, removed in LLVM20:
+      # Added:   https://github.com/llvm/llvm-project/commit/cd2292ef824591cc34cc299910a3098545c840c7
+      # Removed: https://github.com/llvm/llvm-project/commit/ed8f78827895050442f544edef2933a60d4a7935
       "-DCLANG_PSEUDO_GEN=${buildLlvmTools.libclang.dev}/bin/clang-pseudo-gen"
     ]) ++ lib.optionals (stdenv.targetPlatform.useLLVM or false) [
       "-DCLANG_DEFAULT_CXX_STDLIB=ON"
@@ -132,8 +135,10 @@ let
       mkdir -p $dev/bin
     '' + (if lib.versionOlder release_version "15" then ''
       cp bin/clang-tblgen $dev/bin
-    '' else ''
+    '' else if lib.versionAtLeast release_version "15" && lib.versionOlder release_version "20" then ''
       cp bin/{clang-tblgen,clang-tidy-confusable-chars-gen,clang-pseudo-gen} $dev/bin
+    '' else ''
+      cp bin/{clang-tblgen,clang-tidy-confusable-chars-gen} $dev/bin
     '');
 
     passthru = {
