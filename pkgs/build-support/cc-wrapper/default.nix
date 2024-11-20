@@ -554,7 +554,7 @@ stdenvNoCC.mkDerivation {
       touch "$out/nix-support/libc-ldflags"
     '' + optionalString (!isArocc) ''
       echo "-B${libc_lib}${libc.libdir or "/lib/"}" >> $out/nix-support/libc-crt1-cflags
-    '' + optionalString (!(cc.langD or false)) ''
+    '' + optionalString (!(cc.langD or false) && !(cc.langFortran or false)) ''
       echo "-${if isArocc then "I" else "idirafter"} ${libc_dev}${libc.incdir or "/include"}" >> $out/nix-support/libc-cflags
     '' + optionalString (isGNU && (!(cc.langD or false))) ''
       for dir in "${cc}"/lib/gcc/*/*/include-fixed; do
@@ -590,7 +590,7 @@ stdenvNoCC.mkDerivation {
     # already knows how to find its own libstdc++, and adding
     # additional -isystem flags will confuse gfortran (see
     # https://github.com/NixOS/nixpkgs/pull/209870#issuecomment-1500550903)
-    + optionalString (libcxx == null && isClang && (useGccForLibs && gccForLibs.langCC or false)) ''
+    + optionalString (libcxx == null && isClang && (cc.langCC or false) && (useGccForLibs && gccForLibs.langCC or false)) ''
       for dir in ${gccForLibs}/include/c++/*; do
         echo "-isystem $dir" >> $out/nix-support/libcxx-cxxflags
       done
