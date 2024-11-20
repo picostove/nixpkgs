@@ -437,10 +437,15 @@ stdenvNoCC.mkDerivation {
     ''
 
     + optionalString cc.langFortran or false ''
-      wrap ${targetPrefix}gfortran $wrapper $ccPath/${targetPrefix}gfortran
-      ln -sv ${targetPrefix}gfortran $out/bin/${targetPrefix}g77
-      ln -sv ${targetPrefix}gfortran $out/bin/${targetPrefix}f77
-      export named_fc=${targetPrefix}gfortran
+      if [ -e $ccPath/${targetPrefix}gfortran ]; then
+        wrap ${targetPrefix}gfortran $wrapper $ccPath/${targetPrefix}gfortran
+        ln -sv ${targetPrefix}gfortran $out/bin/${targetPrefix}g77
+        ln -sv ${targetPrefix}gfortran $out/bin/${targetPrefix}f77
+        export named_fc=${targetPrefix}gfortran
+      elif [ -e $ccPath/flang ]; then
+        wrap ${targetPrefix}flang $wrapper $ccPath/flang
+        export named_fc=${targetPrefix}flang
+      fi
     ''
 
     + optionalString cc.langJava or false ''
