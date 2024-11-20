@@ -960,6 +960,26 @@ let
         ];
       };
     }
+    // lib.optionalAttrs (lib.versionAtLeast metadata.release_version "20") {
+      flang-unwrapped = callPackage ./flang {
+        # The C++ template instantiations in flang frequently cause g++ to be
+        # OOM-killed, so use clang++ instead.
+        stdenv = overrideCC stdenv buildLlvmTools.clang;
+      };
+      flang = wrapCCWith (
+        let
+          inherit (buildLlvmTools.clang) libcxx;
+        in rec {
+          inherit libcxx;
+          cc = tools.flang-unwrapped;
+          bintools = bintools';
+          extraPackages = [ targetLlvmLibraries.flang-rt ];
+          extraBuildCommands = ''
+            echo "-L${targetLlvmLibraries.flang-rt}/lib" >> $out/nix-support/cc-ldflags
+          '';
+        }
+      );
+    }
   );
 
   libraries = lib.makeExtensible (
@@ -1177,6 +1197,9 @@ let
                 }
               );
       };
+    }
+    // lib.optionalAttrs (lib.versionAtLeast metadata.release_version "20") {
+      flang-rt = callPackage ./flang-rt { };
     }
   );
 
