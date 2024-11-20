@@ -138,6 +138,8 @@ let
     passthru = {
       inherit libllvm;
       isClang = true;
+      langC = true;
+      langCC = true;
       hardeningUnsupportedFlagsByTargetPlatform = targetPlatform:
         [ "fortify3" ]
         ++ lib.optional (
