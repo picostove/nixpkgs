@@ -34,6 +34,7 @@ stdenv.mkDerivation rec {
 
   patches = [
     ./gnu-install-dirs.patch
+    #./20-revert-mlir-dylib.patch
   ];
 
   nativeBuildInputs = [
@@ -48,6 +49,7 @@ stdenv.mkDerivation rec {
 
   cmakeFlags = [
     "-DLLVM_BUILD_TOOLS=ON"
+    "-DMLIR_LINK_MLIR_DYLIB=OFF"
     # Install headers as well
     "-DLLVM_INSTALL_TOOLCHAIN_ONLY=OFF"
     "-DMLIR_TOOLS_INSTALL_DIR=${placeholder "out"}/bin/"
@@ -58,7 +60,6 @@ stdenv.mkDerivation rec {
     "-DLLVM_ENABLE_FFI=ON"
     "-DLLVM_HOST_TRIPLE=${stdenv.hostPlatform.config}"
     "-DLLVM_DEFAULT_TARGET_TRIPLE=${stdenv.hostPlatform.config}"
-    "-DLLVM_ENABLE_DUMP=ON"
     "-DLLVM_TABLEGEN_EXE=${buildLlvmTools.tblgen}/bin/llvm-tblgen"
     "-DMLIR_TABLEGEN_EXE=${buildLlvmTools.tblgen}/bin/mlir-tblgen"
   ] ++ lib.optionals stdenv.hostPlatform.isStatic [

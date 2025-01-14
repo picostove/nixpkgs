@@ -524,12 +524,7 @@ let
             # https://reviews.llvm.org/D51899
             (metadata.getVersionFile "clang/gnu-install-dirs.patch")
 
-            # https://github.com/llvm/llvm-project/pull/116476
-            # prevent clang ignoring warnings / errors for unsuppored
-            # options when building & linking a source file with trailing
-            # libraries. eg: `clang -munsupported hello.c -lc`
-            ./clang/clang-unsupported-option.patch
-          ]
+         ]
           ++ lib.optional (lib.versions.major metadata.release_version == "13")
             # Revert of https://reviews.llvm.org/D100879
             # The malloc alignment assumption is incorrect for jemalloc and causes
@@ -593,7 +588,14 @@ let
             ];
             stripLen = 1;
             hash = "sha256-1NKej08R9SPlbDY/5b0OKUsHjX07i9brR84yXiPwi7E=";
-          });
+          })
+
+          ++ lib.optional (lib.versionOlder (lib.versions.major metadata.release_version) "20")
+            # https://github.com/llvm/llvm-project/pull/116476
+            # prevent clang ignoring warnings / errors for unsuppored
+            # options when building & linking a source file with trailing
+            # libraries. eg: `clang -munsupported hello.c -lc`
+            ./clang/clang-unsupported-option.patch;
       };
 
       clang-unwrapped = tools.libclang;
